@@ -1,7 +1,5 @@
 "############################################################################
-" ~/.vimrc  —  VLSI Physical Design Engineer Productivity Config
-" Covers: TCL/SDC/UPF/Verilog editing, huge log/report navigation,
-"         LEF/DEF syntax hints, fast search, sane defaults.
+" ~/.vimrc 
 "############################################################################
 
 set nocompatible               " use vim defaults, not vi-compatible mode
@@ -155,5 +153,5 @@ highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
 
 "############################################################################
-" End of VLSI .vimrc
+" End of .vimrc
 "############################################################################
