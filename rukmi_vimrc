@@ -1,0 +1,159 @@
+"############################################################################
+" ~/.vimrc  —  VLSI Physical Design Engineer Productivity Config
+" Covers: TCL/SDC/UPF/Verilog editing, huge log/report navigation,
+"         LEF/DEF syntax hints, fast search, sane defaults.
+"############################################################################
+
+set nocompatible               " use vim defaults, not vi-compatible mode
+filetype plugin indent on
+syntax on
+
+"----------------------------------------------------------------------------
+" 1. General behavior
+"----------------------------------------------------------------------------
+set encoding=utf-8
+set hidden                     " switch buffers without saving
+set autoread                   " reload file if changed outside vim (tail-like logs)
+set backspace=indent,eol,start
+set history=1000
+set undolevels=1000
+set nobackup
+set nowritebackup
+set noswapfile                 " avoid .swp clutter on shared/NFS run dirs
+set updatetime=300
+
+"----------------------------------------------------------------------------
+" 2. Indentation — TCL/Verilog/scripts commonly use 2 or 4 spaces, no tabs
+"----------------------------------------------------------------------------
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set expandtab
+set autoindent
+set smartindent
+
+"----------------------------------------------------------------------------
+" 3. Search
+"----------------------------------------------------------------------------
+set incsearch
+set hlsearch
+set ignorecase
+set smartcase                  " case-sensitive only if search has uppercase
+
+"----------------------------------------------------------------------------
+" 4. UI / navigation — essential when scrolling huge STA/PnR logs
+"----------------------------------------------------------------------------
+set number
+set relativenumber             " fast jumps with e.g. 25j / 12k
+set ruler
+set cursorline
+set scrolloff=8                " keep context above/below cursor
+set sidescrolloff=8
+set wrap
+set linebreak                  " wrap at word boundaries, not mid-word
+set showcmd
+set showmatch                  " highlight matching brackets/parens
+set laststatus=2               " always show status line
+set wildmenu
+set wildmode=longest:full,full
+set lazyredraw                 " speeds up scrolling through big logs/macros
+
+" Large-file handling (multi-GB STA/timing/DRC reports)
+set synmaxcol=300               " don't choke syntax-highlighting on long lines
+autocmd BufReadPre * if getfsize(expand("%")) > 20*1024*1024 | syntax off | endif
+
+"----------------------------------------------------------------------------
+" 5. Statusline — file, modified flag, filetype, line/col, % through file
+"----------------------------------------------------------------------------
+set statusline=%f\ %m\ %r
+set statusline+=%=
+set statusline+=[%{&filetype}]\ %l:%c\ (%p%%)
+
+"----------------------------------------------------------------------------
+" 6. Filetype detection for EDA/VLSI file extensions
+"    (best-effort syntax mapping to closest built-in highlighter)
+"----------------------------------------------------------------------------
+augroup vlsi_filetypes
+    autocmd!
+    autocmd BufNewFile,BufRead *.sdc            setfiletype tcl
+    autocmd BufNewFile,BufRead *.upf            setfiletype tcl
+    autocmd BufNewFile,BufRead *.tcl,*.pt,*.pba setfiletype tcl
+    autocmd BufNewFile,BufRead *.lef,*.def      setfiletype conf
+    autocmd BufNewFile,BufRead *.lib            setfiletype conf
+    autocmd BufNewFile,BufRead *.v,*.vh         setfiletype verilog
+    autocmd BufNewFile,BufRead *.sv,*.svh       setfiletype systemverilog
+    autocmd BufNewFile,BufRead *.spef,*.rspf    setfiletype conf
+    autocmd BufNewFile,BufRead *.itf,*.tluplus  setfiletype conf
+    autocmd BufNewFile,BufRead *.rpt,*.log      setfiletype log
+augroup END
+
+"----------------------------------------------------------------------------
+" 7. Leader-key shortcuts (leader = space)
+"----------------------------------------------------------------------------
+let mapleader = " "
+
+" quick save / quit
+nnoremap <leader>w :w<CR>
+nnoremap <leader>q :q<CR>
+nnoremap <leader>x :x<CR>
+
+" toggle line numbers / relative numbers (handy on shared terminals)
+nnoremap <leader>n :set relativenumber!<CR>
+
+" clear search highlight
+nnoremap <leader>/ :nohlsearch<CR>
+
+" toggle syntax highlighting (useful for gigantic log files)
+nnoremap <leader>s :if exists("g:syntax_on") \| syntax off \| else \| syntax enable \| endif<CR>
+
+" split navigation without Ctrl-w prefix twice
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" jump to next/prev error/warning-looking line (STA/DRC log triage)
+nnoremap <leader>e /\c\(error\|violat\)<CR>
+nnoremap <leader>E ?\c\(error\|violat\)<CR>
+nnoremap <leader>wn /\c\(warn\)<CR>
+
+" quickly grep the word under cursor across the run dir (needs :grep/ack/rg)
+nnoremap <leader>g :grep! -R <cword> .<CR>:copen<CR>
+
+"----------------------------------------------------------------------------
+" 8. Convenience for TCL/EDA scripting
+"----------------------------------------------------------------------------
+" match TCL bracket/brace/paren pairs visibly
+set matchpairs+=<:>
+
+" comment/uncomment current line with leader-c (TCL/Shell use #)
+nnoremap <leader>c :s/^/# /<CR>:nohlsearch<CR>
+nnoremap <leader>C :s/^# //<CR>:nohlsearch<CR>
+
+" reload vimrc quickly after edits
+nnoremap <leader>rv :source $MYVIMRC<CR>
+
+"----------------------------------------------------------------------------
+" 9. Diff mode tweaks (useful for comparing SDC/report versions)
+"----------------------------------------------------------------------------
+if &diff
+    set diffopt+=iwhite         " ignore whitespace-only diffs (common in regen'd reports)
+endif
+
+"----------------------------------------------------------------------------
+" 10. Color scheme — safe default that works over SSH/plain terminals
+"----------------------------------------------------------------------------
+set background=dark
+try
+    colorscheme desert
+catch
+    " fall back silently if colorscheme isn't installed
+endtry
+
+" highlight trailing whitespace (common annoyance in shared TCL scripts)
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+
+"############################################################################
+" End of VLSI .vimrc
+"############################################################################
