@@ -1,8 +1,5 @@
 #############################################################################
-# ~/.bashrc  —  VLSI Physical Design Engineer Productivity Config
-# Covers: PnR/STA flows, TCL/Tcl-shell shortcuts, LSF/SGE/SLURM job helpers,
-#         Lmod environment modules, NFS-aware run navigation, log parsing,
-#         license/server checks, git shortcuts, and general shell QoL.
+# ~/.bashrc
 #############################################################################
 
 # ---------------------------------------------------------------------------
