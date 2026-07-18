@@ -42,7 +42,6 @@ set smartcase                  " case-sensitive only if search has uppercase
 " 4. UI / navigation — essential when scrolling huge STA/PnR logs
 "----------------------------------------------------------------------------
 set number
-set relativenumber             " fast jumps with e.g. 25j / 12k
 set ruler
 set cursorline
 set scrolloff=8                " keep context above/below cursor
