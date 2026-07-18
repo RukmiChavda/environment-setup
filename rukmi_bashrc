@@ -28,7 +28,7 @@ shopt -s autocd 2>/dev/null          # type a dir name to cd into it
 shopt -s cdspell 2>/dev/null         # autocorrect minor cd typos
 shopt -s dirspell 2>/dev/null
 shopt -s globstar 2>/dev/null        # enable ** recursive globbing
-set -o vi                            # vi-mode editing (comment out if you prefer emacs)
+# set -o vi                            # vi-mode editing (comment out if you prefer emacs)
 stty -ctlecho 2>/dev/null            # cleaner vi-mode terminal echo
 
 ulimit -c unlimited 2>/dev/null      # allow core dumps for tool debugging
